@@ -4,7 +4,7 @@ services:
     container_name: Dashy
     network_mode: bridge
     # Pull latest image from DockerHub
-    image: lissy93/dashy
+    image: lissy93/dashy:latest
 
     # To build from source, replace 'image: lissy93/dashy' with 'build: .'
     # build: .
