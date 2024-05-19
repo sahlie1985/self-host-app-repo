@@ -1,0 +1,37 @@
+version: "2.4"
+services: 
+  nocodb: 
+    depends_on: 
+      root_db: 
+        condition: service_healthy
+    environment: 
+      NC_DB: "mssql://root_db:1433?u=sa&p=P@ssWord&d=root_db"
+    image: "nocodb/nocodb:latest"
+    ports: 
+      - "5000:8080"
+    restart: always
+    volumes: 
+      - "nc_data:/usr/app/data"
+  root_db: 
+    environment: 
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: P@ssWord
+    healthcheck: 
+      interval: 10s
+      retries: 10
+      start_period: 10s
+      test: "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$$SA_PASSWORD\" -Q \"SELECT 1\" || exit 1"
+      timeout: 3s
+    image: "mcr.microsoft.com/azure-sql-edge:latest"
+    restart: always
+    ports: 
+      - "1433:1433"
+    volumes: 
+      - "db_data_data:/var/opt/mssql-extensibility/data"
+      - "db_data_log:/var/opt/mssql-extensibility/log"
+      - "db_data:/var/opt/mssql-extensibility"
+volumes: 
+  db_data: {}
+  db_data_data: {}
+  db_data_log: {}
+  nc_data: {}
